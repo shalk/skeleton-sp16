@@ -18,40 +18,45 @@ public class ArrayDeque<Item> {
         head = 0;
     }
 
+    public double usage() {
+        return size * 1.0  / items.length;
+    }
+
     /**
      * copy  index head  to  head  + size
      */
     private void resize(int capacity) {
         Item[] a = (Item[])new Object[capacity];
-        if ( head + size  > items.length   ) {
-            // copy two part
+        // lastindex  larger than items.length - 1
+        // lastindex : head + size - 1 > items. length - 1
+        if ( head + size - 1  > items.length -1   ) {
+            // copy from  items[head] .. items[items.length -1 ]
             System.arraycopy(items,head, a,0, items.length - head );
+            // copy from 0 to  last
             System.arraycopy(items, 0 , a, items.length - head, size + head - items.length);
         } else {
             System.arraycopy(items, head, a, 0 , size);
         }
         this.items = a;
+        head = 0;
     }
 
     private void shrink() {
-        int shrinkSize = items.length;
-        while (shrinkSize > 16 && size / shrinkSize < 0.25) {
-            shrinkSize = shrinkSize / 2;
+        int shrinkLength = items.length;
+        while (size / shrinkLength < 0.25) {
+            shrinkLength = shrinkLength / 2;
+            if( shrinkLength <= 16 ) {
+                break;
+            }
         }
-        if (shrinkSize < 16) {
-            shrinkSize = 16;
-        }
-        Item[] a = (Item[])new Object[shrinkSize];
 
-        if ( head + size  > items.length   ) {
-            // copy two part
-            System.arraycopy(items,head, a,0, items.length - head );
-            System.arraycopy(items, 0 , a, items.length - head, size + head - items.length);
-        } else {
-            System.arraycopy(items, head, a, 0 , size);
+        if (shrinkLength < 16) {
+            shrinkLength = 16;
         }
-        this.items = a;
+
+        resize(shrinkLength);
     }
+
 
     /*
     Adds an item to the front of the Deque.
@@ -60,6 +65,13 @@ public class ArrayDeque<Item> {
         if (items.length == size) {
             resize(items.length * 2);
         }
+        if ( size == 0 ){
+            items[0] = item;
+            size = size + 1;
+            head = 0;
+            return;
+        }
+
         head = (head - 1 + items.length) % items.length;
         items[head] = item;
         size = size + 1;
@@ -108,7 +120,7 @@ public class ArrayDeque<Item> {
         if (size == 0) {
             return null;
         }
-        if (items.length > 16 && size / items.length < 0.25) {
+        if (items.length > 16 && usage() < 0.25) {
             shrink();
         }
         Item item = items[head];
@@ -124,7 +136,7 @@ public class ArrayDeque<Item> {
         if (size == 0) {
             return null;
         }
-        if (items.length > 16 && size / items.length < 0.25) {
+        if (items.length > 16 && usage() < 0.25) {
             shrink();
         }
         int lastIndex = (head + size - 1) % items.length;
@@ -141,12 +153,11 @@ public class ArrayDeque<Item> {
         if (size == 0) {
             return null;
         }
-        if ( index + 1 > size ) {
+        if ( index  > size - 1  || index < 0 ) {
             return null;
         }
         int realIndex;
         realIndex = ( head + index ) % items.length;
         return items[realIndex];
-
     }
 }
