@@ -32,6 +32,10 @@ public class LinkedListDeque<T> {
             this.pre = pre;
             this.next = next;
         }
+
+        public  String toString() {
+            return "Node:" + item.toString();
+        }
     }
 
     /**
