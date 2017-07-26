@@ -1,5 +1,8 @@
 import org.junit.Test;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 /**
@@ -72,19 +75,24 @@ public class TestArrayDeque1B {
     @Test
     public void testRemoveFirst() {
         StudentArrayDeque<Integer> deque = new StudentArrayDeque<>();
-        for (int i = 0; i < 30; i++) {
+        // store fail seq
+        ArrayDeque<String> fs = new ArrayDeque<>();
+
+        int SIZE = 8;
+
+        for (int i = 0; i < SIZE; i++) {
             deque.addFirst(i);
+            fs.add("addFirst(" + i + ")");
         }
-        int expectedSize = 30;
-        for (int i = 0; i < 29; i++) {
+
+        for (int i = 0; i < SIZE; i++) {
             //  bugy in removeFirst() ; maybe resize for shrink;
-            deque.removeFirst();
-            expectedSize--;
-            assertEquals(expectedSize, deque.size());
-            Integer actual = deque.get(0);
-            Integer expected = 28 - i;
-            assertEquals(expected, actual);
+            Integer actual = deque.removeFirst();
+            fs.add("removeFirst()");
+            Integer expected = SIZE - 1 - i;
+            assertEquals("after OperationSequence" + fs.toString()+ "\nexpected be "+ expected+", but get " + actual ,expected, actual);
         }
+
     }
 
     @Test

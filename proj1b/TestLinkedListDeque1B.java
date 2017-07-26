@@ -142,13 +142,20 @@ public class TestLinkedListDeque1B {
     @Test
     public void testGetOutOfRange(){
         StudentLinkedListDeque<Integer> deque = new StudentLinkedListDeque<>();
+        LinkedListDequeSolution<String> fs = new LinkedListDequeSolution<>();
+
         for(int i = 0; i < 10; i++) {
             deque.addFirst(1);
+            fs.add("addFirst(" + i + ")");
         }
         Integer expect = null;
         Integer actual = deque.get(15);
+        fs.add("get(15)");
         // bugy here , get value out of range
-        assertEquals(expect, actual);
+
+
+        assertEquals("after operation sequence"  + fs.toString()+ "\n expeceted: " + expect + " but actual :" + actual, expect, actual);
+
     }
 
     public static void main(String[] args) {
